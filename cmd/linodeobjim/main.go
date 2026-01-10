@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal"
+	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -20,19 +20,21 @@ var rootCommand = &cobra.Command{
 
 func Execute() { 
 	
-	cpCmd := internal.CpCommand()
-	mvCmd := internal.MvCommand()
-	rmCmd := internal.RmCommand()
+	cpCmd := commands.CpCommand()
+	mvCmd := commands.MvCommand()
+	rmCmd := commands.RmCommand()
+	configureCmd := commands.ConfigureCommand()
 	var recursive bool
 
 	cpCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively copy objects")
 	mvCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively move objects")
 	rmCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively remove objects")
 
-	rootCommand.AddCommand(internal.LsCommand())
+	rootCommand.AddCommand(commands.LsCommand())
 	rootCommand.AddCommand(cpCmd)
 	rootCommand.AddCommand(mvCmd)
 	rootCommand.AddCommand(rmCmd)
+	rootCommand.AddCommand(configureCmd)
 
 	rootCommand.CompletionOptions = cobra.CompletionOptions{DisableDefaultCmd: true} 
 
