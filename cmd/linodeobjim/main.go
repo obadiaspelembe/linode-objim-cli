@@ -8,11 +8,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const SHORT_DESCRIPTION = "linode-objim is an improved version of linode object storage managemement cli tool."
+const SHORT_DESCRIPTION = "linode-objl+ is an improved version of linode object storage managemement cli tool."
 
 var version = "0.0.1-alpha"
 var rootCommand = &cobra.Command{
-	Use:     "linode-objim",
+	Use:     "linode-objl+",
 	Version: version,
 	Short:   SHORT_DESCRIPTION,
 	Long:    SHORT_DESCRIPTION,
