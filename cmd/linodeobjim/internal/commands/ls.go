@@ -83,12 +83,12 @@ func LsCommand() *cobra.Command {
 							filepath = filepath + part + "/"
 
 						}
-						fmt.Printf("%-4s %8d %-30s %4s \n",
+						fmt.Printf("%-4s %8dB %-30s %4s \n",
 							sObjec.ETag, sObjec.Size, last, cyan(bold(filepath)))
 
 					} else {
 
-						fmt.Printf("%-4s %8d %-45s\n",
+						fmt.Printf("%-4s %8dB %-45s\n",
 							sObjec.ETag, sObjec.Size, sObjec.Name)
 					}
 				}
