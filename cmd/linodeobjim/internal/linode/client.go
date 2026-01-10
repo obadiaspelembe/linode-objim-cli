@@ -7,9 +7,9 @@ type API struct {
 	Region string
 }
 
-func NewAPI(accessKey, region string) *API {
+func NewAPI(token, region string) *API {
 	return &API{
-		Token:  accessKey,
+		Token:  token,
 		Region: region,
 	}
 }

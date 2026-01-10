@@ -47,15 +47,6 @@ func ConfigureCommand() *cobra.Command {
 
 			}
 
-			fmt.Print("Token: ")
-
-			bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
-			if err != nil {
-				panic(err)
-			}
-
-			secret := string(bytePassword)
-
 			// Create a section and set keys
 			sec := cfg.Section("default")
 
@@ -66,7 +57,24 @@ func ConfigureCommand() *cobra.Command {
 				}
 			}
 
+			fmt.Print("Region: ")
+			var newRegion string
+			fmt.Scan(&newRegion)
+
+
+			fmt.Print("Token: ")
+
+			bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
+			if err != nil {
+				panic(err)
+			}
+
+			secret := string(bytePassword)
+
+			
+
 			sec.Key("token").SetValue(secret)
+			sec.Key("region").SetValue(newRegion)
 
 			if err := cfg.SaveTo(filepath.Join(homeDir, ".linodeobjim", "credentials.ini")); err != nil {
 				fmt.Fprintln(os.Stderr, red("\nFailed to save configuration: "+bold(err.Error())))
