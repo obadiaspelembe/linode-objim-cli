@@ -1,32 +1,16 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	// "path/filepath"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands/api"
 	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commons"
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/linode"
 	"github.com/spf13/cobra"
 )
 
-type Object struct {
-	Name         string `json:"name"`
-	Size         int    `json:"size"`
-	LastModified string `json:"last_modified"`
-	ETag         string `json:"etag"`
-}
-
-type ObjectListResponse struct {
-	Data        []Object `json:"data"`
-	NextMarker  string   `json:"next_marker"`
-	IsTruncated bool     `json:"is_truncated"`
-}
 
 func LsCommand() *cobra.Command {
 	return &cobra.Command{
@@ -49,21 +33,8 @@ func LsCommand() *cobra.Command {
 			}
 
 			if len(args) >= 1 {
-				url := "https://api.linode.com/v4/object-storage/buckets/" + config.Region + "/" + args[0] + "/object-list"
-
-				apiClient := linode.NewAPI(config.Token, config.Region)
-
-				req := apiClient.InitializeRequest(url)
-
-				res, _ := http.DefaultClient.Do(req)
-
-				defer res.Body.Close()
-				body, _ := io.ReadAll(res.Body)
-
-				var result ObjectListResponse
-				if err := json.Unmarshal(body, &result); err != nil {
-					panic(err)
-				}
+				// Call the API to get the object list
+				result := api.GetObjectList(args[0], config.Region, config.Token)
 
 				fmt.Printf(green("total %-d\n"), len(result.Data))
 				for _, sObjec := range result.Data {
