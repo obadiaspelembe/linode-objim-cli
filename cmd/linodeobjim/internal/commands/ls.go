@@ -5,12 +5,10 @@ import (
 
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands/api"
 	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commons"
 	"github.com/spf13/cobra"
 )
-
 
 func LsCommand() *cobra.Command {
 	return &cobra.Command{
@@ -20,23 +18,18 @@ func LsCommand() *cobra.Command {
 		Example: "linode-objim ls <bucket-name>",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			green := color.New(color.FgGreen).SprintFunc()
-			red := color.New(color.FgRed).SprintFunc()
-			cyan := color.New(color.FgCyan).SprintFunc()
-			bold := color.New(color.Bold).SprintFunc()
-			// magenta := color.New(color.FgMagenta).SprintFunc()
+			printer := commons.NewPrinter()
 
 			config, err := commons.LoadConfig("default")
-			if err != nil {
-				fmt.Println(red("Error loading config: " + bold(err.Error())))
-				return
-			}
+
+			commons.ErrorCheck(err, "Failed to load configuration")
 
 			if len(args) >= 1 {
 				// Call the API to get the object list
 				result := api.GetObjectList(args[0], config.Region, config.Token)
 
-				fmt.Printf(green("total %-d\n"), len(result.Data))
+				printer.Success(fmt.Sprintf("total %d\n", len(result.Data)))
+
 				for _, sObjec := range result.Data {
 
 					if strings.Contains(sObjec.Name, "/") {
@@ -54,11 +47,12 @@ func LsCommand() *cobra.Command {
 							filepath = filepath + part + "/"
 
 						}
-						fmt.Printf("%-4s %8dB %-30s %4s \n",
-							sObjec.ETag, sObjec.Size, last, cyan(bold(filepath)))
+
+						printer.InfoEx(
+							fmt.Sprintf(" %4s \n", filepath),
+							fmt.Sprintf("%-4s %8dB %-30s", sObjec.ETag, sObjec.Size, last))
 
 					} else {
-
 						fmt.Printf("%-4s %8dB %-45s\n",
 							sObjec.ETag, sObjec.Size, sObjec.Name)
 					}
