@@ -25,13 +25,11 @@ func Execute() {
 	configureCmd := commands.ConfigureCommand()
 	var recursive bool
 
-	cpCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively copy objects")
-	mvCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively move objects")
+	cpCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively copy objects") 
 	rmCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively remove objects")
 
 	rootCommand.AddCommand(commands.LsCommand())
 	rootCommand.AddCommand(cpCmd)
-	rootCommand.AddCommand(mvCmd)
 	rootCommand.AddCommand(rmCmd)
 	rootCommand.AddCommand(configureCmd)
 
