@@ -62,7 +62,6 @@ func GetLinodeSignedURL(token, region, bucket, key, contentType string) (string,
 
 func SaveToLocalFile(presignedURL, localPath string) error {
 
-	fmt.Println(presignedURL)
 	resp, err := http.Get(presignedURL)
 	if err != nil {
 		return err
@@ -85,9 +84,8 @@ func SaveToLocalFile(presignedURL, localPath string) error {
 	}
 	defer f.Close()
 
-	_, err = io.Copy(f, resp.Body);
-    
-    
+	_, err = io.Copy(f, resp.Body)
+
 	// out, err := os.Create(localPath)
 
 	// if err != nil {

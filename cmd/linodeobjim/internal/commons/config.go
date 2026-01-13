@@ -44,3 +44,7 @@ func LoadConfig(profile string) (Config, error) {
 		Region: region,
 	}, nil
 }
+
+func GetColors() {
+	
+}
