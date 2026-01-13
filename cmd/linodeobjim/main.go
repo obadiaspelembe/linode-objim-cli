@@ -20,8 +20,7 @@ var rootCommand = &cobra.Command{
 
 func Execute() { 
 	
-	cpCmd := commands.CpCommand()
-	mvCmd := commands.MvCommand()
+	cpCmd := commands.CpCommand() 
 	rmCmd := commands.RmCommand()
 	configureCmd := commands.ConfigureCommand()
 	var recursive bool
