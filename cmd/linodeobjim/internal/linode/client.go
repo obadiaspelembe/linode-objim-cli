@@ -1,6 +1,9 @@
 package linode
 
-import "net/http"
+import (
+	"bytes"
+	"net/http"
+)
 
 type API struct {
 	Token  string
@@ -22,12 +25,24 @@ func (api *API) SetRegion(region string) {
 	api.Region = region
 }
 
-func (api *API) InitializeRequest(url string) *http.Request {
+func (api *API) InitializeGetRequest(url string) *http.Request {
 
 	req, _ := http.NewRequest("GET", url, nil)
 
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("authorization", "Bearer "+api.Token)
+
+	return req
+}
+
+
+func (api *API) InitializePostRequest(url string, body []byte) *http.Request {
+
+	req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
+
+	req.Header.Add("accept", "application/json")
+	req.Header.Add("authorization", "Bearer "+api.Token)
+	req.Header.Add("Content-Type", "application/json")
 
 	return req
 }

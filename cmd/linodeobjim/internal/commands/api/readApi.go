@@ -26,7 +26,7 @@ func GetObjectList(bucketName string, region string, token string) ObjectListRes
 
 	apiClient := linode.NewAPI(token, region)
 
-	req := apiClient.InitializeRequest(url)
+	req := apiClient.InitializeGetRequest(url)
 
 	res, _ := http.DefaultClient.Do(req)
 
