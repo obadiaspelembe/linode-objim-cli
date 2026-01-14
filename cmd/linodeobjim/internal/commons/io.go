@@ -33,9 +33,9 @@ func (printer *Printer) InfoEx(content string, exclude string ) {
 	fmt.Printf("%s %s",exclude, cyan(content))
 }
 
-func (printer *Printer) Error(content string) string {
+func (printer *Printer) Error(content string) {
 	red := color.New(color.FgRed).SprintFunc()
-	return fmt.Sprintf("%s", red(content))
+	fmt.Printf("%s", red(content))
 }
 
 

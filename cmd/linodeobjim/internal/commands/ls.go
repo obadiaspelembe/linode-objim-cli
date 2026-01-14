@@ -12,8 +12,10 @@ import (
 
 func LsCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:     "ls",
-		Args:    cobra.ExactArgs(1),
+		Use:  "ls",
+		Args: cobra.ExactArgs(1),
+		SilenceUsage:  true,
+		SilenceErrors: true,
 		Short:   "List objects in a object storage bucket",
 		Example: "linode-objim ls <bucket-name>",
 		Run: func(cmd *cobra.Command, args []string) {

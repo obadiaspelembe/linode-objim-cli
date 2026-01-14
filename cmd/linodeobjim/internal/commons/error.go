@@ -2,17 +2,19 @@ package commons
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/fatih/color"
 )
 
-func ErrorCheck(err error, message string) string {
+func ErrorCheck(err error, message string) {
 
-	if err == nil {
-		return ""
+	if err != nil {
+		red := color.New(color.FgRed).SprintFunc()
+		bold := color.New(color.Bold).SprintFunc()
+		fmt.Printf("%s : %s", red(message), red(bold(err.Error())))
+
+		os.Exit(1)
+		return
 	}
-
-	red := color.New(color.FgRed).SprintFunc()
-	bold := color.New(color.Bold).SprintFunc()
-	return fmt.Sprintf("%s : %s", red(message) , red(bold(err.Error())))
 }
