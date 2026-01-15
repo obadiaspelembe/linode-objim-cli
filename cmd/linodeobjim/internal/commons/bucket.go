@@ -10,7 +10,7 @@ func ProcessBucketObject(config Config, bucket, objectKey string) bool {
 
 	ErrorCheck(err, "Error getting signed URL")
 
-	err = api.SaveToLocalFile(SignedURL, "."+objectKey)
+	err = api.SaveToLocalFile(SignedURL, "./"+objectKey)
 
 	ErrorCheck(err, "Error saving file locally")
 
