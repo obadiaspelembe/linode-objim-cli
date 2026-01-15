@@ -70,7 +70,8 @@ func CpCommand() *cobra.Command {
 							return
 						}
 
-						objectKey := strings.ReplaceAll(source[len(commons.BUCKET_PREFIX):], bucket, "")
+						objectKey := strings.ReplaceAll(source[len(commons.BUCKET_PREFIX):], bucket + "/", "")
+
 						commons.ProcessBucketObject(config, bucket, objectKey)
 					}
 
