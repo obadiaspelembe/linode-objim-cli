@@ -86,13 +86,5 @@ func SaveToLocalFile(presignedURL, localPath string) error {
 
 	_, err = io.Copy(f, resp.Body)
 
-	// out, err := os.Create(localPath)
-
-	// if err != nil {
-	// 	return err
-	// }
-	// defer out.Close()
-
-	// _, err = io.Copy(out, resp.Body)
 	return err
 }
