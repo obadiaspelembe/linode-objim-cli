@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/linode"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/linode"
 )
 
 type SignedURLRequest struct {

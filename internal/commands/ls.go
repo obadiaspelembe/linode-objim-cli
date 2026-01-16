@@ -5,8 +5,8 @@ import (
 
 	"strings"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands/api"
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commons"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commands/api"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commons"
 	"github.com/spf13/cobra"
 )
 

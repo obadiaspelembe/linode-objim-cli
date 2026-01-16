@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commands"
 	"github.com/spf13/cobra"
 )
 

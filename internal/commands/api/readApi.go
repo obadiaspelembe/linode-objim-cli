@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/linode"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/linode"
 )
 
 type Object struct {

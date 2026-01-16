@@ -1,7 +1,7 @@
 package commons
 
 import (
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands/api"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commands/api"
 )
 
 func ProcessBucketObject(config Config, bucket, objectKey string) bool {
