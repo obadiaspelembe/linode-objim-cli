@@ -38,7 +38,7 @@ func CpCommand() *cobra.Command {
 						if rec {
 
 							if parts[1] == "" {
-								result := api.GetObjectList(bucket, config.Region, config.Token)
+								result := api.GetObjectList(bucket, config.Region, config.Token, rec)
 
 								for _, sObjec := range result.Data {
 									status := commons.ProcessBucketObject(config, bucket, sObjec.Name)
@@ -50,7 +50,7 @@ func CpCommand() *cobra.Command {
 							} else {
 								
 
-								result := api.GetObjectList(bucket, config.Region, config.Token)
+								result := api.GetObjectList(bucket, config.Region, config.Token, rec)
 
 								for _, sObjec := range result.Data {
 
