@@ -4,7 +4,10 @@ go 1.24.0
 
 require github.com/fatih/color v1.18.0
 
-require gopkg.in/ini.v1 v1.67.1 // indirect
+require (
+	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
+	gopkg.in/ini.v1 v1.67.1 // indirect
+)
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

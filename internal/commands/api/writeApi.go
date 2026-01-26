@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -28,7 +29,7 @@ type SignedURLResponse struct {
 	SignedURL string `json:"url"`
 }
 
-func GetLinodeSignedURL(token, region, bucket, key, contentType string) (string, error) {
+func GetLinodeSignedURL(token, region, bucket, key, contentType, method string) (string, error) {
 
 	apiClient := linode.NewAPI(token, region)
 
@@ -39,6 +40,15 @@ func GetLinodeSignedURL(token, region, bucket, key, contentType string) (string,
 			Name:               key,
 		})
 
+	if method == "PUT" {
+		body, _ = json.Marshal(
+			SignedURLRequest{
+				Method:      "PUT",
+				Name:        key,
+				ContentType: contentType,
+				ExpiresIn:   3600,
+			})
+	}
 	req := apiClient.InitializePostRequest(
 		fmt.Sprintf("https://api.linode.com/v4/object-storage/buckets/%s/%s/object-url", region, bucket),
 		body)
@@ -87,4 +97,34 @@ func SaveToLocalFile(presignedURL, localPath string) error {
 	_, err = io.Copy(f, resp.Body)
 
 	return err
+}
+
+func UploadToBucket(presignedURL, localPath, contentType string) error {
+
+	fileBytes, err := os.ReadFile(localPath)
+	if err != nil {
+		panic(err)
+	}
+
+	putReq, err := http.NewRequest("PUT", presignedURL, bytes.NewReader(fileBytes))
+	if err != nil {
+		panic(err)
+	}
+
+	putReq.Header.Set("Content-Type", contentType)
+
+	putRes, err := http.DefaultClient.Do(putReq)
+	if err != nil {
+		return err
+	}
+
+	defer putRes.Body.Close()
+
+	if putRes.StatusCode == 200 {
+		return nil
+	} else {
+		_, err := io.ReadAll(putRes.Body)
+
+		return err
+	}
 }

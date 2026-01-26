@@ -8,6 +8,8 @@ import (
 	"github.com/obadiaspelembe/linode-objim-cli/internal/commands/api"
 	"github.com/obadiaspelembe/linode-objim-cli/internal/commons"
 
+	"github.com/gabriel-vasile/mimetype"
+
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +29,7 @@ func CpCommand() *cobra.Command {
 
 				config, err := commons.LoadConfig("default")
 
-				commons.ErrorCheck(err, "Failed to load configuration")
+				commons.ErrorCheck(err, "Failed to load configuration", false)
 
 				if strings.HasPrefix(source, commons.BUCKET_PREFIX) {
 
@@ -77,7 +79,21 @@ func CpCommand() *cobra.Command {
 
 					printer.Success("Success!")
 				} else {
-					fmt.Println("Source is a local file path")
+
+					if rec {
+						printer.Info("To be implemented!")
+					}
+					m, err := mimetype.DetectFile(source)
+
+					commons.ErrorCheck(err, "Failed to detect file type", false)
+
+					parts := strings.Split(args[1][len(commons.BUCKET_PREFIX):], "/")
+					bucket := parts[0]
+					resp := commons.ProcessLocalObject(config, bucket, source, m.String())
+
+					if resp {
+						printer.Success("Success! " + source )
+					}
 				}
 
 			}

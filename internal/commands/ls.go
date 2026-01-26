@@ -26,7 +26,7 @@ func LsCommand() *cobra.Command {
 
 			config, err := commons.LoadConfig("default")
 
-			commons.ErrorCheck(err, "Failed to load configuration")
+			commons.ErrorCheck(err, "Failed to load configuration", false)
 
 			if len(args) >= 1 {
 				// Call the API to get the object list

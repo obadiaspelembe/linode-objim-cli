@@ -28,7 +28,7 @@ func TestErrorCheck_NoError_NoOutput_NoExit(t *testing.T) {
     os.Stdout = w
 
     // Call with nil error — should not print and not exit
-    ErrorCheck(nil, "should not print")
+    ErrorCheck(nil, "should not print", false)
 
     // Restore stdout
     _ = w.Close()
@@ -103,7 +103,7 @@ func TestHelperProcess(t *testing.T) {
     msg := os.Getenv("ERR_MSG")
 
     // Call the function under test; this should print and exit(1)
-    ErrorCheck(errors.New(errText), msg)
+    ErrorCheck(errors.New(errText), msg, false)
 
     // If ErrorCheck did not exit, fail to signal unexpected behavior
     t.Fatalf("ErrorCheck did not call os.Exit(1) as expected")
