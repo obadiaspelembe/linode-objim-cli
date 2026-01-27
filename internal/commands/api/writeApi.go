@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/linode"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/linode"
 )
 
 type SignedURLRequest struct {
@@ -28,7 +29,7 @@ type SignedURLResponse struct {
 	SignedURL string `json:"url"`
 }
 
-func GetLinodeSignedURL(token, region, bucket, key, contentType string) (string, error) {
+func GetLinodeSignedURL(token, region, bucket, key, contentType, method string) (string, error) {
 
 	apiClient := linode.NewAPI(token, region)
 
@@ -39,6 +40,15 @@ func GetLinodeSignedURL(token, region, bucket, key, contentType string) (string,
 			Name:               key,
 		})
 
+	if method == "PUT" {
+		body, _ = json.Marshal(
+			SignedURLRequest{
+				Method:      "PUT",
+				Name:        key,
+				ContentType: contentType,
+				ExpiresIn:   3600,
+			})
+	}
 	req := apiClient.InitializePostRequest(
 		fmt.Sprintf("https://api.linode.com/v4/object-storage/buckets/%s/%s/object-url", region, bucket),
 		body)
@@ -86,13 +96,92 @@ func SaveToLocalFile(presignedURL, localPath string) error {
 
 	_, err = io.Copy(f, resp.Body)
 
-	// out, err := os.Create(localPath)
-
-	// if err != nil {
-	// 	return err
-	// }
-	// defer out.Close()
-
-	// _, err = io.Copy(out, resp.Body)
 	return err
 }
+
+func UploadToBucket(presignedURL, localPath, contentType string) error {
+
+	fileBytes, err := os.ReadFile(localPath)
+	if err != nil {
+		panic(err)
+	}
+
+	putReq, err := http.NewRequest("PUT", presignedURL, bytes.NewReader(fileBytes))
+	if err != nil {
+		panic(err)
+	}
+
+	putReq.Header.Set("Content-Type", contentType)
+
+	putRes, err := http.DefaultClient.Do(putReq)
+	if err != nil {
+		return err
+	}
+
+	defer putRes.Body.Close()
+
+	if putRes.StatusCode == 200 {
+		return nil
+	} else {
+		_, err := io.ReadAll(putRes.Body)
+
+		return err
+	}
+}
+
+
+func ReadAllFilesFromDir (dirPath string) ([]string, error) {
+
+	var fileList []string
+
+	
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			_, err := filepath.Rel(dirPath, path)
+			if err != nil {
+				return err
+			}
+			
+
+			fileList = append(fileList, path)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fileList, nil
+}
+
+func ReadAllFromDir(dirPath string) (map[string][]byte, error) {
+	filesContent := make(map[string][]byte)
+
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			relativePath, err := filepath.Rel(dirPath, path)
+			if err != nil {
+				return err
+			}
+			content, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			filesContent[relativePath] = content
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return filesContent, nil
+}	

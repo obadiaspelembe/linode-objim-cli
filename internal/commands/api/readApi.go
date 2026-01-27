@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/linode"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/linode"
 )
 
 type Object struct {
@@ -21,8 +21,14 @@ type ObjectListResponse struct {
 	IsTruncated bool     `json:"is_truncated"`
 }
 
-func GetObjectList(bucketName string, region string, token string) ObjectListResponse {
+func GetObjectList(bucketName string, region string, token string, recursive bool) ObjectListResponse {
+
 	url := "https://api.linode.com/v4/object-storage/buckets/" + region + "/" + bucketName + "/object-list"
+
+
+	if !recursive {
+		url = url + "?delimiter=/&prefix="
+	}
 
 	apiClient := linode.NewAPI(token, region)
 

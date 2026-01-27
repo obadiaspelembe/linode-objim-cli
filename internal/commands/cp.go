@@ -5,8 +5,10 @@ import (
 
 	"strings"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands/api"
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commons"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commands/api"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commons"
+
+	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +29,7 @@ func CpCommand() *cobra.Command {
 
 				config, err := commons.LoadConfig("default")
 
-				commons.ErrorCheck(err, "Failed to load configuration")
+				commons.ErrorCheck(err, "Failed to load configuration", false)
 
 				if strings.HasPrefix(source, commons.BUCKET_PREFIX) {
 
@@ -38,7 +40,7 @@ func CpCommand() *cobra.Command {
 						if rec {
 
 							if parts[1] == "" {
-								result := api.GetObjectList(bucket, config.Region, config.Token)
+								result := api.GetObjectList(bucket, config.Region, config.Token, rec)
 
 								for _, sObjec := range result.Data {
 									status := commons.ProcessBucketObject(config, bucket, sObjec.Name)
@@ -46,38 +48,69 @@ func CpCommand() *cobra.Command {
 									if status {
 										printer.Success(fmt.Sprintf("%s\n", sObjec.Name))
 									}
-								} 
+								}
 							} else {
-								
 
-								result := api.GetObjectList(bucket, config.Region, config.Token)
+								result := api.GetObjectList(bucket, config.Region, config.Token, rec)
 
 								for _, sObjec := range result.Data {
 
-									isPartOf := strings.HasPrefix(sObjec.Name, source[len(parts[0]) + len(commons.BUCKET_PREFIX) + 1 :])
+									isPartOf := strings.HasPrefix(sObjec.Name, source[len(parts[0])+len(commons.BUCKET_PREFIX)+1:])
 
 									if isPartOf {
 										status := commons.ProcessBucketObject(config, bucket, sObjec.Name)
-	
+
 										if status {
 											printer.Success(fmt.Sprintf("%s\n", sObjec.Name))
 										}
 									}
 								}
 							}
- 
 
 							return
 						}
 
-						objectKey := strings.ReplaceAll(source[len(commons.BUCKET_PREFIX):], bucket + "/", "")
+						objectKey := strings.ReplaceAll(source[len(commons.BUCKET_PREFIX):], bucket+"/", "")
 
 						commons.ProcessBucketObject(config, bucket, objectKey)
 					}
 
 					printer.Success("Success!")
 				} else {
-					fmt.Println("Source is a local file path")
+
+					if rec {
+						dirFiles, err := api.ReadAllFilesFromDir(source)
+
+						commons.ErrorCheck(err, "Failed to fetch files", false)
+
+						for _, file := range dirFiles {
+
+							m, err := mimetype.DetectFile(file)
+
+							commons.ErrorCheck(err, "Failed to detect file type", false)
+
+							parts := strings.Split(args[1][len(commons.BUCKET_PREFIX):], "/")
+							bucket := parts[0]
+							resp := commons.ProcessLocalObject(config, bucket, file, m.String())
+
+							if resp {
+								printer.Success(fmt.Sprintf("Success on %s\n", file))
+							}
+						}
+					} else {
+
+						m, err := mimetype.DetectFile(source)
+
+						commons.ErrorCheck(err, "Failed to detect file type", false)
+
+						parts := strings.Split(args[1][len(commons.BUCKET_PREFIX):], "/")
+						bucket := parts[0]
+						resp := commons.ProcessLocalObject(config, bucket, source, m.String())
+
+						if resp {
+							printer.Success(fmt.Sprintf("Success on %s\n", source))
+						}
+					}
 				}
 
 			}

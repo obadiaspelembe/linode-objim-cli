@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/obadiaspelembe/linode-objim-cli/cmd/linodeobjim/internal/commands"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -23,12 +23,14 @@ func Execute() {
 	cpCmd := commands.CpCommand() 
 	rmCmd := commands.RmCommand()
 	configureCmd := commands.ConfigureCommand()
+	lsCmd := commands.LsCommand()
 	var recursive bool
 
-	cpCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively copy objects") 
-	rmCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively remove objects")
+	cpCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Copy from/to bucket directories and their contents recursively") 
+	rmCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Remove bucket directories and their contents recursively")
+	lsCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "List bucket subdirectories recursively")
 
-	rootCommand.AddCommand(commands.LsCommand())
+	rootCommand.AddCommand(lsCmd)
 	rootCommand.AddCommand(cpCmd)
 	rootCommand.AddCommand(rmCmd)
 	rootCommand.AddCommand(configureCmd)
