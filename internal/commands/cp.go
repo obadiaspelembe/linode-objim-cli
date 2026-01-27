@@ -48,31 +48,29 @@ func CpCommand() *cobra.Command {
 									if status {
 										printer.Success(fmt.Sprintf("%s\n", sObjec.Name))
 									}
-								} 
+								}
 							} else {
-								
 
 								result := api.GetObjectList(bucket, config.Region, config.Token, rec)
 
 								for _, sObjec := range result.Data {
 
-									isPartOf := strings.HasPrefix(sObjec.Name, source[len(parts[0]) + len(commons.BUCKET_PREFIX) + 1 :])
+									isPartOf := strings.HasPrefix(sObjec.Name, source[len(parts[0])+len(commons.BUCKET_PREFIX)+1:])
 
 									if isPartOf {
 										status := commons.ProcessBucketObject(config, bucket, sObjec.Name)
-	
+
 										if status {
 											printer.Success(fmt.Sprintf("%s\n", sObjec.Name))
 										}
 									}
 								}
 							}
- 
 
 							return
 						}
 
-						objectKey := strings.ReplaceAll(source[len(commons.BUCKET_PREFIX):], bucket + "/", "")
+						objectKey := strings.ReplaceAll(source[len(commons.BUCKET_PREFIX):], bucket+"/", "")
 
 						commons.ProcessBucketObject(config, bucket, objectKey)
 					}
@@ -81,18 +79,37 @@ func CpCommand() *cobra.Command {
 				} else {
 
 					if rec {
-						printer.Info("To be implemented!")
-					}
-					m, err := mimetype.DetectFile(source)
+						dirFiles, err := api.ReadAllFilesFromDir(source)
 
-					commons.ErrorCheck(err, "Failed to detect file type", false)
+						commons.ErrorCheck(err, "Failed to fetch files", false)
 
-					parts := strings.Split(args[1][len(commons.BUCKET_PREFIX):], "/")
-					bucket := parts[0]
-					resp := commons.ProcessLocalObject(config, bucket, source, m.String())
+						for _, file := range dirFiles {
 
-					if resp {
-						printer.Success("Success! " + source )
+							m, err := mimetype.DetectFile(file)
+
+							commons.ErrorCheck(err, "Failed to detect file type", false)
+
+							parts := strings.Split(args[1][len(commons.BUCKET_PREFIX):], "/")
+							bucket := parts[0]
+							resp := commons.ProcessLocalObject(config, bucket, file, m.String())
+
+							if resp {
+								printer.Success(fmt.Sprintf("Success on %s\n", file))
+							}
+						}
+					} else {
+
+						m, err := mimetype.DetectFile(source)
+
+						commons.ErrorCheck(err, "Failed to detect file type", false)
+
+						parts := strings.Split(args[1][len(commons.BUCKET_PREFIX):], "/")
+						bucket := parts[0]
+						resp := commons.ProcessLocalObject(config, bucket, source, m.String())
+
+						if resp {
+							printer.Success(fmt.Sprintf("Success on %s\n", source))
+						}
 					}
 				}
 

@@ -128,3 +128,60 @@ func UploadToBucket(presignedURL, localPath, contentType string) error {
 		return err
 	}
 }
+
+
+func ReadAllFilesFromDir (dirPath string) ([]string, error) {
+
+	var fileList []string
+
+	
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			_, err := filepath.Rel(dirPath, path)
+			if err != nil {
+				return err
+			}
+			
+
+			fileList = append(fileList, path)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fileList, nil
+}
+
+func ReadAllFromDir(dirPath string) (map[string][]byte, error) {
+	filesContent := make(map[string][]byte)
+
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			relativePath, err := filepath.Rel(dirPath, path)
+			if err != nil {
+				return err
+			}
+			content, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			filesContent[relativePath] = content
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return filesContent, nil
+}	
