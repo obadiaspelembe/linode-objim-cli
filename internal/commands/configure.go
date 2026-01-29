@@ -15,6 +15,7 @@ import (
 	"gopkg.in/ini.v1"
 
 	"github.com/fatih/color"
+	"github.com/obadiaspelembe/linode-objim-cli/internal/commons"
 	"github.com/spf13/cobra"
 )
 
@@ -32,20 +33,22 @@ func ConfigureCommand() *cobra.Command {
 			bold := color.New(color.Bold).SprintFunc()
 
 			homeDir, err := os.UserHomeDir() 
+
+			credentialsFile := filepath.Join(homeDir, commons.CONFIG_DIR_NAME, commons.CREDENTIALS_FILE)
  
 			if err != nil {
 				fmt.Printf("Failed to get user home directory: %v\n", err)
 				
 			}
 
-			if err := os.MkdirAll(filepath.Join(homeDir, ".linodeobjim"), 0700); err != nil {
+			if err := os.MkdirAll(filepath.Join(homeDir, commons.CONFIG_DIR_NAME), 0700); err != nil {
 
 				fmt.Fprintln(os.Stderr, red("\nCannot create directory: "+bold(err.Error())))
 				os.Exit(1)
 
 			}
 
-			cfg, err := ini.Load(filepath.Join(homeDir, ".linodeobjim", "credentials.ini"))
+			cfg, err := ini.Load(credentialsFile)
 			if err != nil {
 				cfg = ini.Empty()
 
@@ -96,7 +99,7 @@ func ConfigureCommand() *cobra.Command {
 			sec.Key("token").SetValue(secret)
 			sec.Key("region").SetValue(newRegion)
 
-			if err := cfg.SaveTo(filepath.Join(homeDir, ".linodeobjim", "credentials.ini")); err != nil {
+			if err := cfg.SaveTo(credentialsFile); err != nil {
 				fmt.Fprintln(os.Stderr, red("\nFailed to save configuration: "+bold(err.Error())))
 				os.Exit(1)
 			}
