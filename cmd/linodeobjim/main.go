@@ -25,10 +25,14 @@ func Execute() {
 	configureCmd := commands.ConfigureCommand()
 	lsCmd := commands.LsCommand()
 	var recursive bool
+	var profile string
 
 	cpCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Copy from/to bucket directories and their contents recursively") 
 	rmCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "Remove bucket directories and their contents recursively")
 	lsCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "List bucket subdirectories recursively")
+	configureCmd.Flags().StringVarP(&profile, "profile", "P", "default", "Specify the configuration profile to use")
+	cpCmd.Flags().StringVarP(&profile, "profile", "P", "default", "Specify the configuration profile to use")
+	lsCmd.Flags().StringVarP(&profile, "profile", "P", "default", "Specify the configuration profile to use")
 
 	rootCommand.AddCommand(lsCmd)
 	rootCommand.AddCommand(cpCmd)

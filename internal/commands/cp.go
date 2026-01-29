@@ -23,11 +23,12 @@ func CpCommand() *cobra.Command {
 
 			printer := commons.NewPrinter()
 			rec, _ := cmd.Flags().GetBool("recursive")
+			profile, _ := cmd.Flags().GetString("profile")
 
 			if len(args) == 2 {
 				var source = args[0]
 
-				config, err := commons.LoadConfig("default")
+				config, err := commons.LoadConfig(profile)
 
 				commons.ErrorCheck(err, "Failed to load configuration", false)
 

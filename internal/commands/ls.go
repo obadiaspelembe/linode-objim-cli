@@ -21,10 +21,11 @@ func LsCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 
 			rec, _ := cmd.Flags().GetBool("recursive")
+			profile, _ := cmd.Flags().GetString("profile")
 
 			printer := commons.NewPrinter()
 
-			config, err := commons.LoadConfig("default")
+			config, err := commons.LoadConfig(profile)
 
 			commons.ErrorCheck(err, "Failed to load configuration", false)
 
